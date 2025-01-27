@@ -8,10 +8,27 @@ from selenium.webdriver.support.ui import WebDriverWait
 # サイトの識別子
 name = "Mercari"
 
+# 検索URLを生成する関数 (JavaScript)
+queryjs = """
+	((keyword) => {
+		const params = new URLSearchParams({
+			keyword: keyword,
+			sort: "created_time",
+			order: "desc",
+			status: "on_sale"
+		});
+		return "https://jp.mercari.com/search?" + params.toString();
+	})
+"""
+
+# 検索URLを生成する関数
+def query(keyword):
+	queries = {"keyword": keyword, "sort": "created_time", "order": "desc", "status": "on_sale"}
+	return f"https://jp.mercari.com/search?{urlencode(queries)}"
+
 # フェッチャーにさせる動作
 def get(driver, keyword):
-	query = {"keyword": keyword, "sort": "created_time", "order": "desc", "status": "on_sale"}
-	driver.get(f"https://jp.mercari.com/search?{urlencode(query)}")
+	driver.get(query(keyword))
 	WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#search-result li figure + span, #search-result .merEmptyState")))
 	container = driver.find_element(By.ID, "search-result")
 	return container.get_attribute("innerHTML")

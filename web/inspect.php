@@ -15,6 +15,15 @@ define("PAGE_TITLE", "監査");
 ?>
 <?php include "./frames/header.php"; ?>
     <main>
+      <script defer src="./assets/query.js"></script>
+      <section class="query-test">
+        <h2>クエリテスト</h2>
+        <div>
+          <label>
+            キーワード：<input type="text" id="query-input" placeholder="キーワードを入力">
+          </label><div class="buttons" id="query-buttons"></div>
+        </div>
+      </section>
 <?php IF($err_log === null): ?>
       <section>
         <h2>エラー</h2>

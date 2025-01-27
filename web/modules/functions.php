@@ -4,6 +4,39 @@ function h($str) {
   return htmlspecialchars($str, ENT_QUOTES, "UTF-8");
 }
 
+// インラインスクリプトに安全な文字列かどうか
+function is_safe_for_inline_script($str) {
+  $match = preg_match("/<\/script(\/| |>)/i", $str);
+  if ($match === false) {
+    return false;
+  }
+  return $match ? false : true;
+}
+
+// リクエスト中に変わらないノンスを生成
+function nonce() {
+  static $cache = null;
+  if ($cache === null) {
+    $cache = hash("sha256", random_bytes(1024));
+  }
+  return $cache;
+}
+
+// サイトごとのクエリの組み立て方を返す
+function queries() {
+  static $cache = null;
+  if ($cache === null) {
+    $json_path = realpath(__DIR__."/../../data/queries.json");
+    $res = file_get_contents($json_path);
+    if ($res === false) {
+      $cache = json_decode("{}", true);
+    } else {
+      $cache = json_decode($res, true);
+    }
+  }
+  return $cache;
+}
+
 // データベースへの接続を開いて返す
 function open_db() {
   $db_path = realpath(__DIR__."/../../data/nominium.db");

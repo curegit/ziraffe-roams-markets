@@ -1,7 +1,9 @@
 <?php
 require_once "./modules/functions.php";
+
+$nonce = nonce();
 ?>
-<?php header("Content-Security-Policy: frame-ancestors 'none'; script-src 'self'"); ?>
+<?php header("Content-Security-Policy: frame-ancestors 'none'; script-src 'self' 'nonce-{$nonce}'"); ?>
 <?php header("Cache-Control: no-store"); ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -19,6 +21,14 @@ require_once "./modules/functions.php";
     <link href="./assets/filter.css" rel="stylesheet">
     <link href="./assets/ziraffe.png" rel="icon">
     <link href="./assets/ziraffe-sq.png" rel="apple-touch-icon">
+    <script nonce="<?= $nonce ?>">
+      const queries = {};
+<?php FOREACH(queries() as $name => $query): ?>
+<?php IF(is_safe_for_inline_script($query) && is_safe_for_inline_script(json_encode($name))): ?>
+      queries[<?= json_encode($name) ?>] = (<?= $query ?>);
+<?php ENDIF; ?>
+<?php ENDFOREACH; ?>
+    </script>
   </head>
   <body>
     <header>
